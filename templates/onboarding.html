@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>How to rate</h2>
+  <ol>
+    <li><strong>Prompt Adherence</strong>: Did the image follow the instructions?</li>
+    <li><strong>Aesthetic Quality</strong>: Is it visually pleasing and well-composed?</li>
+    <li><strong>Creativity</strong>: Is it fresh/interesting while still on-brief?</li>
+    <li><strong>Animation-Style Look</strong>: Does it look like an illustration/cartoon?</li>
+  </ol>
+  <p>If a prompt asks for specific <strong>text</strong>, mark whether it’s correct/legible. If a prompt says <strong>no people</strong>, flag any people that appear.</p>
+  <p>For rankings, you’ll see 4 images for one prompt—drag or choose to rank them 1 (best) to 4.</p>
+  <div class="buttons">
+<a class="btn" href="{{ url_for('start_module', module_id='A') }}">Start Part A</a>
+<a class="btn" href="{{ url_for('start_module', module_id='B') }}">Start Part B</a>
+<a class="btn" href="{{ url_for('start_module', module_id='C') }}">Start Part C</a>
+    <a class="btn" href="{{ url_for('start_full_session') }}">Start Full Session (A → B → C)</a>
+  </div>
+</section>
+{% endblock %}

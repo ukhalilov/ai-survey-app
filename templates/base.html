@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>{{ title or "Animation Image Survey" }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='client.js') }}"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1><a href="{{ url_for('home') }}">{{ heading or "Animation Image Survey" }}</a></h1>
+    </div>
+  </header>
+  <main class="container">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="flash">
+          {% for m in messages %}<div>{{ m }}</div>{% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <div class="container small">
+      <span>Your responses are anonymous. • Ulugbek Khalilov • IT Park University</span>
+    </div>
+  </footer>
+</body>
+</html>

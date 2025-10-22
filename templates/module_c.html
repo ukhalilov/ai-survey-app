@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="card" method="post" action="{{ url_for('submit_c') }}" onsubmit="return beforeSubmit('elapsed_ms_c')">
+  <div class="headrow">
+    <div>Part C — Set {{ idx }} of {{ total }}</div>
+  </div>
+<p class="prompt">
+  <strong>Prompt:</strong>
+  {{ prompt_core }}
+  <button type="button"
+          class="btn btn-small linklike"
+          onclick="togglePrepend(this, 'prepend-c')">see prepend</button>
+  <span id="prepend-c" style="display:none;"> {{ prompt_prepend }}</span>
+</p>
+
+<div class="c-grid">
+  {% for b64 in img_b64_list %}
+    <button type="button" class="c-tile" onclick="openZoom('{{ url_for('serve_img') }}?p={{ b64 }}')">
+      <img src="{{ url_for('serve_img') }}?p={{ b64 }}" alt="variant {{ loop.index }}">
+    </button>
+  {% endfor %}
+</div>
+
+<!-- place dialog OUTSIDE the <form> -->
+<dialog id="c-zoom" class="c-zoom">
+  <div class="c-zoom__content">
+    <button type="button" class="c-zoom__close" onclick="closeZoom()" aria-label="Close">×</button>
+    <img id="c-zoom-img" alt="Full size">
+  </div>
+</dialog>
+
+
+
+  <div class="field">
+    <label>Diversity (1–5 best): How different are these while still matching the prompt?</label>
+    <input type="range" name="diversity" min="1" max="5" value="3" step="1" oninput="showVal(this)">
+    <span class="bubble">3</span>
+  </div>
+
+  <!-- Hidden payload -->
+  <input type="hidden" name="provider" value="{{ provider }}">
+  <input type="hidden" name="category_id" value="{{ cat }}">
+  <input type="hidden" name="prompt_id" value="{{ prompt_id }}">
+  <input type="hidden" id="elapsed_ms_c" name="elapsed_ms" value="0">
+  <input type="hidden" name="image_paths_json" value='{{ images | default([], true) | tojson }}'>
+
+
+  <div class="buttons">
+    <button class="btn" type="submit">Submit & Next</button>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>{{ title or "Not available" }}</h2>
+  <p>{{ message or "This section is currently unavailable." }}</p>
+  <div class="buttons">
+    <a class="btn" href="{{ url_for('home') }}">Back to Home</a>
+    {% if session.get('is_admin') %}
+      <form method="post" action="{{ url_for('admin_reload') }}" style="display:inline">
+        <button class="btn" type="submit">Reload Pools (Admin)</button>
+      </form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

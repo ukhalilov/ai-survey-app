@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card">
+  <div class="headrow">
+    <h2>Overview</h2>
+    <div>
+      <button class="btn" onclick="reloadPools()">Reload Pools</button>
+      <a class="btn" href="{{ url_for('admin_export') }}">Export CSVs</a>
+      <a class="btn" href="{{ url_for('admin_logout') }}">Logout</a>
+    </div>
+  </div>
+
+  <div id="overview" class="grid-3 smallcards">
+    <div class="mini card-lite"><div class="k">—</div><div class="t">Raters</div></div>
+    <div class="mini card-lite"><div class="k">—</div><div class="t">Responses A</div></div>
+    <div class="mini card-lite"><div class="k">—</div><div class="t">Responses B</div></div>
+    <div class="mini card-lite"><div class="k">—</div><div class="t">Responses C</div></div>
+    <div class="mini card-lite"><div class="k">—</div><div class="t">Pool A</div></div>
+    <div class="mini card-lite"><div class="k">—</div><div class="t">Pool B</div></div>
+    <div class="mini card-lite"><div class="k">—</div><div class="t">Pool C</div></div>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Module A — MOS per provider</h3>
+  <table id="tableA" class="table">
+    <thead><tr>
+      <th>Provider</th><th>N</th>
+      <th>Adherence</th><th>Aesthetic</th><th>Creativity</th><th>Style</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="grid-2">
+    <div>
+      <h4>Text correctness (has_text prompts)</h4>
+      <table id="tableAText" class="table">
+        <thead><tr><th>Provider</th><th>Correct</th><th>Partial</th><th>Incorrect</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div>
+      <h4>No-people compliance</h4>
+      <table id="tableAPeople" class="table">
+        <thead><tr><th>Provider</th><th>With rule</th><th>Violations</th><th>Violation rate</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h3>Module B — Ranking summary</h3>
+  <table id="tableB" class="table">
+    <thead><tr>
+      <th>Provider</th><th>N</th><th>Avg rank ↓</th><th>#1 Wins</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section class="card">
+  <h3>Module C — Diversity</h3>
+  <table id="tableC" class="table">
+    <thead><tr>
+      <th>Provider</th><th>N</th><th>Avg diversity</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section class="card">
+  <h3>Recent submissions</h3>
+  <div class="grid-3 smallcards" id="recent">
+    <div>
+      <h4>Part A</h4>
+      <ul id="recentA" class="list"></ul>
+    </div>
+    <div>
+      <h4>Part B</h4>
+      <ul id="recentB" class="list"></ul>
+    </div>
+    <div>
+      <h4>Part C</h4>
+      <ul id="recentC" class="list"></ul>
+    </div>
+  </div>
+</section>
+
+<script>
+let timer = null;
+
+function fmt(n) { return n === null || n === undefined ? "—" : String(n); }
+function pct(num, den) { if (!den) return "—"; return ((100*num/den).toFixed(1)) + "%"; }
+
+async function fetchStats() {
+  const r = await fetch("{{ url_for('admin_stats') }}");
+  const js = await r.json();
+  if (!js.ok) return;
+
+  const d = js.data;
+
+  // Overview
+  const ov = document.querySelectorAll("#overview .k");
+  const t = d.totals, p = d.pools;
+  const vals = [t.raters, t.A, t.B, t.C, p.pool_A, p.pool_B, p.pool_C];
+  ov.forEach((el, i) => el.textContent = fmt(vals[i]));
+
+  // Module A MOS
+  const tbA = document.querySelector("#tableA tbody");
+  tbA.innerHTML = "";
+  (d.A.mos || []).forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${row.provider}</td><td>${row.n}</td>
+                    <td>${row.adherence}</td><td>${row.aesthetic}</td>
+                    <td>${row.creativity}</td><td>${row.style}</td>`;
+    tbA.appendChild(tr);
+  });
+
+  // Text correctness
+  const tbAT = document.querySelector("#tableAText tbody");
+  tbAT.innerHTML = "";
+  (d.A.text || []).forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${row.provider}</td>
+                    <td>${row.correct||0}</td><td>${row.partial||0}</td><td>${row.incorrect||0}</td>`;
+    tbAT.appendChild(tr);
+  });
+
+  // People compliance
+  const tbAP = document.querySelector("#tableAPeople tbody");
+  tbAP.innerHTML = "";
+  (d.A.people || []).forEach(row => {
+    const withRule = row.with_rule || 0;
+    const viol = row.violations || 0;
+    const rate = withRule ? ((100*viol/withRule).toFixed(1)+"%") : "—";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${row.provider}</td>
+                    <td>${withRule}</td><td>${viol}</td><td>${rate}</td>`;
+    tbAP.appendChild(tr);
+  });
+
+  // Module B ranking
+  const tbB = document.querySelector("#tableB tbody");
+  tbB.innerHTML = "";
+  (d.B.ranking || []).forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${row.provider}</td><td>${row.n}</td>
+                    <td>${row.avg_rank}</td><td>${row.wins}</td>`;
+    tbB.appendChild(tr);
+  });
+
+  // Module C diversity
+  const tbC = document.querySelector("#tableC tbody");
+  tbC.innerHTML = "";
+  (d.C.diversity || []).forEach(row => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${row.provider}</td><td>${row.n}</td><td>${row.avg_diversity}</td>`;
+    tbC.appendChild(tr);
+  });
+
+  // Recent
+  const listA = document.getElementById("recentA");
+  const listB = document.getElementById("recentB");
+  const listC = document.getElementById("recentC");
+  listA.innerHTML = ""; listB.innerHTML = ""; listC.innerHTML = "";
+  (d.recent.A || []).forEach(r => {
+    const li = document.createElement("li");
+    li.textContent = `${r.submitted_utc}  •  ${r.provider}  •  ${r.category_id}/${r.prompt_id}  •  seed ${r.seed_label}`;
+    listA.appendChild(li);
+  });
+  (d.recent.B || []).forEach(r => {
+    const li = document.createElement("li");
+    li.textContent = `${r.submitted_utc}  •  ${r.category_id}/${r.prompt_id}  •  seed ${r.seed_label}`;
+    listB.appendChild(li);
+  });
+  (d.recent.C || []).forEach(r => {
+    const li = document.createElement("li");
+    li.textContent = `${r.submitted_utc}  •  ${r.provider}  •  ${r.category_id}/${r.prompt_id}  •  div=${r.diversity}`;
+    listC.appendChild(li);
+  });
+}
+
+function startPolling() {
+  if (timer) clearInterval(timer);
+  fetchStats();
+  timer = setInterval(fetchStats, 5000);
+}
+
+async function reloadPools() {
+  const r = await fetch("{{ url_for('admin_reload') }}", { method: "POST" });
+  const js = await r.json();
+  if (js.ok) {
+    fetchStats();
+    alert("Task pools rebuilt from latest manifests.");
+  } else {
+    alert("Reload failed: " + (js.error || "Unknown error"));
+  }
+}
+
+startPolling();
+</script>
+
+{% endblock %}

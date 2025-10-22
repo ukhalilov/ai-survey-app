@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="card" method="post" action="{{ url_for('submit_b') }}" onsubmit="return beforeSubmit('elapsed_ms_b')">
+  <div class="headrow">
+    <div>Part B — Set {{ idx }} of {{ total }}</div>
+  </div>
+
+  <p class="prompt">
+    <strong>Prompt:</strong>
+    {{ prompt_core }}
+    <button type="button" class="btn btn-small linklike" onclick="togglePrepend(this, 'prepend-b')">see prepend</button>
+    <span id="prepend-b" style="display:none;"> {{ prompt_prepend }}</span>
+  </p>
+
+  <div>Rank images 1 (best) to 4</div>
+
+<div class="grid-2 gap-4">
+  {% for card in display %}
+    <div class="rank-card" data-provider="{{ card.provider }}">
+      <button type="button"
+              class="rank-zoom"
+              onclick="openZoom('{{ url_for('serve_img') }}?p={{ card.img_b64 }}')"
+              title="Click to zoom">
+        <img class="rank-img"
+             src="{{ url_for('serve_img') }}?p={{ card.img_b64 }}"
+             alt="{{ card.provider }} image">
+      </button>
+
+      <div class="pill-group" role="group" aria-label="Rank 1 to 4">
+        {% for n in [1,2,3,4] %}
+          <button type="button" class="pill" data-rank="{{ n }}"
+                  onclick="pickRank('{{ card.provider }}', {{ n }})">{{ n }}</button>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- place dialog OUTSIDE the <form> -->
+<dialog id="c-zoom" class="c-zoom">
+  <div class="c-zoom__content">
+    <button type="button" class="c-zoom__close" onclick="closeZoom()" aria-label="Close">×</button>
+    <img id="c-zoom-img" alt="Full size">
+  </div>
+</dialog>
+
+
+
+
+  <!-- Hidden payload -->
+  <input type="hidden" name="category_id" value="{{ cat }}">
+  <input type="hidden" name="prompt_id" value="{{ prompt }}">
+  <input type="hidden" name="seed_label" value="{{ seed }}">
+
+  {% for card in display %}
+    <input type="hidden" name="image_{{ card.provider }}" value="{{ card.image_path }}">
+    <input type="hidden" id="rank_{{ card.provider }}" name="rank_{{ card.provider }}" value="">
+  {% endfor %}
+  <input type="hidden" id="elapsed_ms_b" name="elapsed_ms" value="0">
+
+  <div class="buttons">
+    <button id="b-submit" class="btn" type="submit" disabled>Submit & Next</button>
+  </div>
+</form>
+{% endblock %}

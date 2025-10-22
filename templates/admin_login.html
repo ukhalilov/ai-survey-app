@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<form class="card" method="post" action="{{ url_for('admin_login', next=request.args.get('next')) }}">
+  <h2>Admin Login</h2>
+  <p>Enter the admin token.</p>
+  <div class="field">
+    <label>Token</label>
+    <input name="token" type="password" required autocomplete="current-password" />
+  </div>
+  <div class="buttons">
+    <button class="btn" type="submit">Login</button>
+    <a class="btn" href="{{ url_for('home') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

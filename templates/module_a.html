@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- How to rate — Part A only -->
+<section id="a-instructions" class="card info">
+  <div class="headrow">
+    <div><strong>How to rate</strong></div>
+  </div>
+  <ul class="list">
+    <li>Rate each image on a <strong>1–5 scale</strong> based on following criteria:</li>
+    <li><strong>Prompt Adherence</strong>: Did the image follow the instructions?</li>
+    <li><strong>Aesthetic Quality</strong>: Is it visually pleasing and well-composed?</li>
+    <li><strong>Creativity</strong>: Is it fresh/interesting while still on-brief?</li>
+    <li><strong>Animation-Style Look</strong>: Does it look like an illustration/cartoon?</li>
+    <li>If a prompt asks for specific <strong>text</strong>, mark whether it’s <strong>correct</strong></li>
+    <li>If a prompt says <strong>no people</strong>, mark whether there’s a <strong>violation</strong></li>
+  </ul>
+  <div class="buttons">
+    <button type="button" class="btn" onclick="hideAInstructions()">Hide these instructions</button>
+  </div>
+</section>
+
+<!-- Collapsed toggle (only shown when hidden) -->
+<p id="a-instructions-toggle" class="muted" style="display:none">
+  <button type="button" class="btn linklike" onclick="showAInstructions()">Show instructions</button>
+</p>
+<form class="card" method="post" action="{{ url_for('submit_a') }}" onsubmit="return beforeSubmit('elapsed_ms_a')">
+  <div class="headrow">
+    <div>Part A — Image {{ idx }} of {{ total }}</div>
+  </div>
+ <p class="prompt">
+  <strong>Prompt:</strong>
+  {{ prompt_core }}
+  <button type="button"
+          class="btn btn-small linklike"
+          onclick="togglePrepend(this, 'prepend-a')">see prepend</button>
+  <span id="prepend-a" style="display:none;"> {{ prompt_prepend }}</span>
+</p>
+  <div class="img-wrap">
+    <img src="{{ url_for('serve_img') }}?p={{ img_b64 }}" alt="image"/>
+  </div>
+
+  <div class="field">
+    <label>Prompt Adherence (1–5 best)</label>
+    <input type="range" name="adherence" min="1" max="5" value="3" step="1" oninput="showVal(this)">
+    <span class="bubble">3</span>
+  </div>
+  <div class="field">
+    <label>Aesthetic Quality (1–5 best)</label>
+    <input type="range" name="aesthetic" min="1" max="5" value="3" step="1" oninput="showVal(this)">
+    <span class="bubble">3</span>
+  </div>
+  <div class="field">
+    <label>Creativity (1–5 best)</label>
+    <input type="range" name="creativity" min="1" max="5" value="3" step="1" oninput="showVal(this)">
+    <span class="bubble">3</span>
+  </div>
+  <div class="field">
+    <label>Animation-Style Look (1–5 best)</label>
+    <input type="range" name="style" min="1" max="5" value="3" step="1" oninput="showVal(this)">
+    <span class="bubble">3</span>
+  </div>
+
+  {% if item.has_text %}
+  <div class="field">
+    <label>Text correctness</label>
+    <select name="text_correctness" required>
+      <option value="">Choose…</option>
+      <option value="correct">Correct</option>
+      <option value="partial">Partially correct</option>
+      <option value="incorrect">Incorrect / Illegible</option>
+    </select>
+  </div>
+  {% else %}
+  <input type="hidden" name="text_correctness" value="">
+  {% endif %}
+
+  {% if item.no_people %}
+  <div class="field">
+    <label>Does the image wrongly include people?</label>
+    <select name="people_violation" required>
+      <option value="0">No</option>
+      <option value="1">Yes</option>
+    </select>
+  </div>
+  {% else %}
+  <input type="hidden" name="people_violation" value="0">
+  {% endif %}
+
+  <!-- Hidden payload -->
+  <input type="hidden" name="provider" value="{{ item.provider }}">
+  <input type="hidden" name="model" value="{{ item.model }}">
+  <input type="hidden" name="category_id" value="{{ item.category_id }}">
+  <input type="hidden" name="prompt_id" value="{{ item.prompt_id }}">
+  <input type="hidden" name="seed_label" value="{{ item.seed_label }}">
+  <input type="hidden" name="image_path" value="{{ item.image_path }}">
+  <input type="hidden" name="prompt_text" value="{{ item.prompt_text }}">
+  <input type="hidden" name="has_text" value="{{ item.has_text }}">
+  <input type="hidden" name="no_people" value="{{ item.no_people }}">
+  <input type="hidden" id="elapsed_ms_a" name="elapsed_ms" value="0">
+
+  <div class="buttons">
+    <button class="btn" type="submit">Submit & Next</button>
+  </div>
+</form>
+{% endblock %}

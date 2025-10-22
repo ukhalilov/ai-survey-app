@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Welcome</h2>
+  <p>Thank you for help us evaluate AI models for <strong>animation-style images</strong>.</p>
+  <p>Choose one quick module below (A/B/C) or start a full session:</p>
+</section>
+
+<section class="grid-2">
+  <a class="card btn-card" href="{{ url_for('start_module', module_id='A') }}">
+    <h3>Start Part A</h3>
+    <p>Rate single images</p>
+    <p>~10–12 minutes</p>
+  </a>
+  <a class="card btn-card" href="{{ url_for('start_module', module_id='B') }}">
+    <h3>Start Part B</h3>
+    <p>Rank 4 images for the same prompt</p>
+    <p>~10–12 minutes</p>
+  </a>
+  <a class="card btn-card" href="{{ url_for('start_module', module_id='C') }}">
+    <h3>Start Part C</h3>
+    <p>Judge diversity of 5 variations</p>
+    <p>~8–10 minutes</p>
+  </a>
+  <a class="card btn-card" href="{{ url_for('start_full_session') }}">
+    <h3>Start Full Session</h3>
+    <p>A → B → C</p>
+    <p>~50–60 minutes</p>
+  </a>
+</section>
+{% endblock %}

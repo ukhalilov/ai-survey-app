@@ -1,0 +1,25 @@
+# Where your generated images/manifests live per provider (Linux on Render)
+providers:
+  chatgpt: "/var/data/research/chatgpt"
+  google:  "/var/data/research/google"
+  stability: "/var/data/research/stability"
+  bfl: "/var/data/research/flux"   # your "flux" folder is mapped to provider key "bfl"
+
+# Seed labels
+seed_labels: [11, 23, 37, 53, 71]
+
+# How many items each rater sees per module
+module_items:
+  A: 24
+  B: 12
+  C: 12
+
+# Optional filter
+filter:
+  status_ok_only: true
+  # require_1k_square: true
+
+# Storage (DB + exports): persist this on the Render disk too
+storage:
+  root: "/var/data/survey_results"
+  fallback_root: "/var/data/survey_results"

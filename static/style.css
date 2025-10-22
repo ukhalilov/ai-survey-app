@@ -1,0 +1,163 @@
+:root {
+  --bg: #0f1115; --fg: #e7e9ee; --muted: #aab2c0; --accent: #5aa0ff; --card: #151923;
+  --border: #242a36; --btn: #1e2633; --btn-hover: #263142;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+       background: var(--bg); color: var(--fg); }
+header, footer { background: #0c0f14; border-bottom: 1px solid var(--border); }
+footer { border-top: 1px solid var(--border); border-bottom: none; margin-top: 24px; }
+.container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+.small { color: var(--muted); font-size: 14px; }
+h1, h2, h3 { margin: 0 0 12px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin: 16px 0; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.btn-card { text-decoration: none; color: var(--fg); text-align: center; }
+.btn { background: var(--btn); color: var(--fg); border: 1px solid var(--border); padding: 10px 16px;
+       border-radius: 8px; text-decoration: none; cursor: pointer; }
+.btn:hover { background: var(--btn-hover); }
+.img-wrap, .tile img { width: 100%; background: #0c0f14; border: 1px solid var(--border); border-radius: 8px; }
+.tile { background: #121722; border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
+.field { margin: 12px 0; }
+.field label { display: block; margin-bottom: 6px; color: var(--muted); }
+input[type=range] { width: 100%; }
+.bubble { margin-left: 8px; color: var(--muted); }
+.buttons { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.prompt { white-space: pre-wrap; }
+.headrow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; color: var(--muted); }
+.flash { background: #3a1e1e; border: 1px solid #5a2a2a; padding: 8px; border-radius: 8px; margin-bottom: 8px; }
+.seedlabel { margin-top: 6px; color: var(--muted); font-size: 12px; text-align: center; }
+
+.table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+.table th, .table td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; }
+.table th { background: #0f1420; color: var(--muted); }
+.smallcards { gap: 8px; }
+.card-lite { background: #121722; border: 1px dashed var(--border); border-radius: 8px; padding: 10px; }
+.card-lite .k { font-size: 20px; font-weight: 600; }
+.card-lite .t { color: var(--muted); }
+.list { list-style: none; padding-left: 0; margin: 0; }
+.list li { padding: 4px 0; border-bottom: 1px dashed var(--border); }
+
+.charts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 12px 0; }
+@media (max-width: 1100px) { .charts { grid-template-columns: 1fr; } }
+.btn-small { padding: 2px 8px; font-size: 12px; line-height: 1.2; }
+.linklike { background: transparent; border: none; text-decoration: underline; cursor: pointer; }
+.btn-card.disabled { opacity: .45; pointer-events: none; }
+
+.grid-2 { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 1rem; }
+.rank-card { position:relative; background:#13161b; padding:12px; border-radius:16px; box-shadow:0 1px 8px rgba(0,0,0,.25); }
+.rank-img { width:100%; height:auto; display:block; border-radius:12px; }
+.badge { position:absolute; top:10px; left:10px; background:#2a2f39; color:#cfd6e4; padding:4px 8px; border-radius:999px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; }
+.pill-group { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+.pill { border:1px solid #3a4252; background:#1b2029; color:#cfd6e4; border-radius:999px; padding:6px 12px; cursor:pointer; }
+.pill.active { background:#3a82f6; border-color:#3a82f6; color:white; }
+.pill:disabled { opacity:.45; cursor:not-allowed; }
+@media (max-width: 900px){
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Part C: 3 on first row, 2 centered on second row */
+.c-grid {
+  --c-gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;              /* ← centers each wrapped row */
+  gap: var(--c-gap);
+  margin: 12px 0 16px;
+  padding-inline: 0;                    /* no extra outer padding needed now */
+}
+
+.c-tile {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  border-radius: 12px;
+  overflow: hidden;
+
+  /* 3 equal columns on wide screens */
+  width: calc((100% - (2 * var(--c-gap))) / 3);
+}
+
+.c-tile img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive: 2 columns on tablets */
+@media (max-width: 900px) {
+  .c-tile {
+    width: calc((100% - var(--c-gap)) / 2);
+  }
+}
+
+/* 1 column on phones */
+@media (max-width: 520px) {
+  .c-tile {
+    width: 100%;
+  }
+}
+
+.rank-zoom {
+  padding: 0;
+  border: 0;
+  background: #ffffff;
+  cursor: zoom-in;
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Backdrop */
+.c-zoom::backdrop { background: rgba(0,0,0,.65); }
+
+/* Dialog chrome */
+.c-zoom {
+  border: none;
+  padding: 0;
+  background: transparent;
+}
+
+/* Positioning context for the close button */
+.c-zoom__content {
+  position: relative;              /* <-- key line */
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+/* Image scales within the content box */
+.c-zoom__content img {
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+/* Close button in the top-right of the content */
+.c-zoom__close {
+  position: absolute;              /* <-- anchors to .c-zoom__content */
+  top: 8px;
+  right: 8px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  font-size: 22px;
+  line-height: 36px;
+  cursor: pointer;
+}
+/* Part A instructions card */
+.card.info { background: #141820; border: 1px solid #2a2f39; }
+.card.info .list { margin: 6px 0 0 18px; }
+.card.info .buttons { margin-top: 10px; }
+.btn.linklike { background: transparent; border: none; text-decoration: underline; padding: 0; }
+
+h1 a{color: #ffffff; text-decoration: none;}
+h1 a:hover{text-decoration: underline;}
