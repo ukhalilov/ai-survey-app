@@ -4,3 +4,11 @@ __pycache__/
 .DS_Store
 /exports/
 /storage/
+# IDE
+.idea/
+.vscode/
+
+# Virtual env
+.venv/
+venv/
+ENV/
