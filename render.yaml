@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: surveyapp
+    runtime: python
+    region: oregon
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app -b 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    healthCheckPath: /
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_SECRET
+        sync: false          # you will set this in the dashboard
+      - key: ADMIN_TOKEN
+        sync: false          # you will set this in the dashboard
+      - key: PYTHONUNBUFFERED
+        value: "1"
+    disk:
+      name: survey-data
+      mountPath: /var/data
+      sizeGB: 20
